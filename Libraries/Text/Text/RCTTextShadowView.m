@@ -177,6 +177,12 @@
 
 - (NSAttributedString *)attributedTextWithMeasuredAttachmentsThatFitSize:(CGSize)size
 {
+  static UIImage *placeholderImage;
+  static dispatch_once_t onceToken;
+   dispatch_once(&onceToken, ^{
+     placeholderImage = [UIImage new];
+   });
+
   NSMutableAttributedString *attributedText =
     [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedTextWithBaseTextAttributes:nil]];
 
@@ -195,6 +201,7 @@
                                                    maximumSize:size];
       NSTextAttachment *attachment = [NSTextAttachment new];
       attachment.bounds = (CGRect){CGPointZero, fittingSize};
+      attachment.image = placeholderImage;
       [attributedText addAttribute:NSAttachmentAttributeName value:attachment range:range];
     }
   ];
@@ -304,7 +311,7 @@
         RCTRoundPixelValue(attachmentSize.width),
         RCTRoundPixelValue(attachmentSize.height)
       }};
-      
+
       NSRange truncatedGlyphRange = [layoutManager truncatedGlyphRangeInLineFragmentForGlyphAtIndex:range.location];
       BOOL viewIsTruncated = NSIntersectionRange(range, truncatedGlyphRange).length != 0;
 
