@@ -74,14 +74,14 @@ const API = {
     invariant(NativeAnimatedModule, 'Native animated module is not available');
     queueConnections = false;
     if (!queueOperations) {
-      if (Platform.OS === 'android') {
+      if (Platform.OS === 'android' && NativeAnimatedModule.startOperationBatch) {
         NativeAnimatedModule.startOperationBatch();
       }
       for (let q = 0, l = queue.length; q < l; q++) {
         queue[q]();
       }
       queue.length = 0;
-      if (Platform.OS === 'android') {
+      if (Platform.OS === 'android' && NativeAnimatedModule.finishOperationBatch) {
         NativeAnimatedModule.finishOperationBatch();
       }
     }
